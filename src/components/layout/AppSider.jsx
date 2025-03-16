@@ -1,4 +1,4 @@
-import {Layout,Card,Statistic,List,Typography,Spin } from 'antd'
+import {Layout,Card,Statistic,List,Typography,Spin,Tag } from 'antd'
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { fakeFetchAssets, fakeFetchCrypto } from '../../api';
@@ -12,13 +12,6 @@ const siderStyle = {
 
   };
 
-  const data = [
-    'Racing car sprays burning fuel into crowd.',
-    'Japanese princess to wed commoner.',
-    'Australian walks 100km after outback crash.',
-    'Man charged over missing wedding girl.',
-    'Los Angeles battles huge wildfires.',
-  ];
   
 const AppSider = () =>{
 
@@ -66,10 +59,23 @@ if (loading) {
         />
         <List
         size='small'
-      dataSource={data}
+      dataSource={[
+        {title: 'Total profit',value:asset.totalProfit,withTag:true},
+        {title: 'Asset Amound',value:asset.amount,isPlain:true},
+        {title: 'Differences',value:asset.growPercent}
+      ]}
+
+      
+
       renderItem={(item) => (
         <List.Item>
-          <Typography.Text mark>[ITEM]</Typography.Text> {item}
+          <span>{item.title}</span>
+          <span>
+            {item.withTag && <Tag color={asset.grow? 'green':'red' }>{asset.growPercent}%</Tag>}
+          {item.isPlain && item.value}
+          {!item.isPlain && (
+            <Typography.Text type={asset.grow ? 'success': 'danger'}>{item.value}$</Typography.Text>)}
+        </span>
         </List.Item>
       )}
     />
