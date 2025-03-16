@@ -2,6 +2,10 @@ import {Layout,Card,Statistic,List,Typography,Spin } from 'antd'
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { fakeFetchAssets, fakeFetchCrypto } from '../../api';
+import { percentDifference } from '../../utils';
+
+
+
 
 const siderStyle = {
     padding:'1rem'
@@ -28,7 +32,16 @@ useEffect(()=>{
   const {result} = await fakeFetchCrypto()
   const assets = await fakeFetchAssets()
 
-  setAssets(assets)
+  setAssets(assets.map(asset=>{
+    const coin = result.find((c)=>c.id===asset.id)
+    return{
+        grow: asset.price < coin.price,
+        growPercent: percentDifference(asset.price, coin.price),
+        totalAmound:asset.amount * coin.price,
+        totalProfit: asset.amount * coin.price - asset.amount * asset.price,
+        ...asset
+    }
+  }))
   setCrypto(result)
   setLoading(false)
     }
@@ -41,14 +54,15 @@ if (loading) {
 
     return(
     <Layout.Sider width="25%" style={siderStyle}>
-     <Card style={{marginBottom:'1rem'}}>
+        {assets.map(asset=>(
+            <Card key={asset.id} style={{marginBottom:'1rem'}}>
      <Statistic
-          title="Active"
-          value={11.28}
+          title={asset.is}
+          value={asset.totalAmound}
           precision={2}
-          valueStyle={{ color: '#3f8600' }}
-          prefix={<ArrowUpOutlined />}
-          suffix="%"
+          valueStyle={{ color: asset.grow ? '#3f8600' : 'red'}}
+          prefix={asset.grow ? <ArrowUpOutlined />:<ArrowDownOutlined />}
+          suffix="$"
         />
         <List
         size='small'
@@ -60,16 +74,9 @@ if (loading) {
       )}
     />
      </Card>
-     <Card>
-     <Statistic
-          title="Idle"
-          value={9.3}
-          precision={2}
-          valueStyle={{ color: '#cf1322' }}
-          prefix={<ArrowDownOutlined />}
-          suffix="%"
-        />
-     </Card>
+        ))}
+     
+     
     </Layout.Sider>
     )
 }
