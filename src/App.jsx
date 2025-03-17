@@ -3,12 +3,14 @@ import {  Layout } from 'antd';
 import AppSider from './components/layout/AppSider';
 import AppContent from './components/layout/AppContent';
 import AppHeader from './components/layout/AppHeader';
+import { CryptoContextProvider } from './context/crypto-context';
 
 
 function App() {
   
   return (
     <>
+    <CryptoContextProvider>
     <Layout>
         <AppHeader />
     <Layout>
@@ -16,6 +18,7 @@ function App() {
         <AppContent />
     </Layout>
     </Layout>
+    </CryptoContextProvider>
     </>
   )
 }
